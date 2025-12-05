@@ -150,7 +150,18 @@ class CountLeavesVisitor(NodeVisitor):
 
 
 class PreOrderIterator:
+    """
+    Iterador que percorre a árvore seguindo a estratégia Pré-Ordem (Pre-Order).
+    Visita a raiz primeiro, depois os filhos recursivamente.
+    """
+
     def __init__(self, root: Optional[Node]) -> None:
+        """
+        Inicializa o iterador com o nó raiz.
+
+        Args:
+            root (Optional[Node]): O nó raiz da árvore ou subárvore.
+        """
         # A pilha armazena os nós a serem visitados.
         self.stack: List[Node] = [root] if root else []
 
@@ -158,6 +169,15 @@ class PreOrderIterator:
         return self
 
     def __next__(self) -> Node:
+        """
+        Retorna o próximo nó na sequência de iteração.
+
+        Returns:
+            Node: O próximo nó visitado.
+
+        Raises:
+            StopIteration: Quando não há mais nós a visitar.
+        """
         if not self.stack:
             raise StopIteration
 
@@ -176,22 +196,46 @@ class PreOrderIterator:
 
 
 class BuilderState(ABC):
+    """
+    Interface abstrata para os estados do processo de construção da árvore.
+    """
+
     @abstractmethod
     def execute_construction_phase(self, builder: TreeBuilder) -> None:
+        """
+        Executa a lógica específica do estado atual e realiza a transição para o próximo estado.
+
+        Args:
+            builder (TreeBuilder): O contexto que mantém o estado atual.
+        """
         pass
 
 
 class TreeBuilder:
+    """
+    Contexto que gerencia o estado atual da construção da árvore.
+    Mantém uma referência para o estado atual e delega a execução para ele.
+    """
+
     def __init__(self) -> None:
         self._state: Optional[BuilderState] = None
 
     def set_state(self, state: BuilderState) -> None:
+        """
+        Altera o estado atual do construtor.
+
+        Args:
+            state (BuilderState): O novo estado a ser definido.
+        """
         self._state = state
         print(
             f"TreeBuilder: Transição de Estado -> {state.__class__.__name__}."
         )
 
     def advance_construction(self) -> None:
+        """
+        Avança o processo de construção delegando a ação para o estado atual.
+        """
         if self._state:
             self._state.execute_construction_phase(self)
         else:
@@ -199,6 +243,11 @@ class TreeBuilder:
 
 
 class SplittingState(BuilderState):
+    """
+    Estado responsável pela divisão dos nós (Splitting).
+    Simula a escolha do melhor atributo para dividir os dados.
+    """
+
     def execute_construction_phase(self, builder: TreeBuilder) -> None:
         print(
             "Estado Splitting: Analisando ganho de informação e dividindo nós."
@@ -208,6 +257,11 @@ class SplittingState(BuilderState):
 
 
 class PruningState(BuilderState):
+    """
+    Estado responsável pela poda da árvore (Pruning).
+    Simula a remoção de ramos irrelevantes para evitar overfitting.
+    """
+
     def execute_construction_phase(self, builder: TreeBuilder) -> None:
         print(
             "Estado Pruning: Avaliando complexidade e podando ramos desnecessários."
@@ -217,6 +271,11 @@ class PruningState(BuilderState):
 
 
 class StoppingState(BuilderState):
+    """
+    Estado final de parada (Stopping).
+    Indica que a construção da árvore foi concluída.
+    """
+
     def execute_construction_phase(self, builder: TreeBuilder) -> None:
         print(
             "Estado Stopping: Critérios de parada atingidos. Construção finalizada."
