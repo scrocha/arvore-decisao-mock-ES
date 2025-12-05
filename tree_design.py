@@ -91,3 +91,29 @@ class PreOrderIterator:
                 self.stack.append(child)
 
         return node
+
+
+##########################################################################################
+
+
+class BuilderState(ABC):
+    @abstractmethod
+    def execute_construction_phase(self, builder: TreeBuilder) -> None:
+        pass
+
+
+class TreeBuilder:
+    def __init__(self) -> None:
+        self._state: Optional[BuilderState] = None
+
+    def set_state(self, state: BuilderState) -> None:
+        self._state = state
+        print(
+            f"TreeBuilder: Transição de Estado -> {state.__class__.__name__} ---"
+        )
+
+    def advance_construction(self) -> None:
+        if self._state:
+            self._state.execute_construction_phase(self)
+        else:
+            print("TreeBuilder: Nenhum estado definido para avançar.")
