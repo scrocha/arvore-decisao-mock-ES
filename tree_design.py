@@ -117,3 +117,29 @@ class TreeBuilder:
             self._state.execute_construction_phase(self)
         else:
             print("TreeBuilder: Nenhum estado definido para avançar.")
+
+
+class SplittingState(BuilderState):
+    def execute_construction_phase(self, builder: TreeBuilder) -> None:
+        print(
+            "Estado Splitting: Analisando ganho de informação e dividindo nós..."
+        )
+        # Lógica simulada de transição para o próximo estado (Poda)
+        builder.set_state(PruningState())
+
+
+class PruningState(BuilderState):
+    def execute_construction_phase(self, builder: TreeBuilder) -> None:
+        print(
+            "Estado Pruning: Avaliando complexidade e podando ramos desnecessários..."
+        )
+        # Lógica simulada de transição para o próximo estado (Parada)
+        builder.set_state(StoppingState())
+
+
+class StoppingState(BuilderState):
+    def execute_construction_phase(self, builder: TreeBuilder) -> None:
+        print(
+            "Estado Stopping: Critérios de parada atingidos. Construção finalizada."
+        )
+        # Fim do ciclo, não há mais transições automáticas.
