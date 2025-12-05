@@ -1,3 +1,7 @@
+"""
+Módulo que implementa os padrões Visitor, Composite, Iterator e State para uma árvore de decisão, juntamente com as classes de nó da árvore.
+"""
+
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -49,17 +53,17 @@ class NodeVisitor(ABC):
 
 class DepthVisitor(NodeVisitor):
     def visit_decision(self, node: DecisionNode) -> None:
-        print(f"DepthVisitor: Calculando profundidade no nó {node}")
+        print(f"DepthVisitor: Calculando profundidade no nó {node}.")
         for child in node.children:
             child.accept_visitor(self)
 
     def visit_leaf(self, node: LeafNode) -> None:
-        print(f"DepthVisitor: Atingiu a base da árvore no nó {node}")
+        print(f"DepthVisitor: Atingiu a base da árvore no nó {node}.")
 
 
 class CountLeavesVisitor(NodeVisitor):
     def visit_decision(self, node: DecisionNode) -> None:
-        print(f"CountLeavesVisitor: Atravessando {node} para encontrar folhas")
+        print(f"CountLeavesVisitor: Atravessando {node} para encontrar folhas.")
         for child in node.children:
             child.accept_visitor(self)
 
@@ -109,7 +113,7 @@ class TreeBuilder:
     def set_state(self, state: BuilderState) -> None:
         self._state = state
         print(
-            f"TreeBuilder: Transição de Estado -> {state.__class__.__name__} ---"
+            f"TreeBuilder: Transição de Estado -> {state.__class__.__name__}."
         )
 
     def advance_construction(self) -> None:
@@ -122,7 +126,7 @@ class TreeBuilder:
 class SplittingState(BuilderState):
     def execute_construction_phase(self, builder: TreeBuilder) -> None:
         print(
-            "Estado Splitting: Analisando ganho de informação e dividindo nós..."
+            "Estado Splitting: Analisando ganho de informação e dividindo nós."
         )
         # Lógica simulada de transição para o próximo estado (Poda)
         builder.set_state(PruningState())
@@ -131,7 +135,7 @@ class SplittingState(BuilderState):
 class PruningState(BuilderState):
     def execute_construction_phase(self, builder: TreeBuilder) -> None:
         print(
-            "Estado Pruning: Avaliando complexidade e podando ramos desnecessários..."
+            "Estado Pruning: Avaliando complexidade e podando ramos desnecessários."
         )
         # Lógica simulada de transição para o próximo estado (Parada)
         builder.set_state(StoppingState())

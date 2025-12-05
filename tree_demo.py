@@ -1,3 +1,7 @@
+"""
+Módulo de demonstração dos padrões State, Composite, Iterator e Visitor aplicados a uma árvore de decisão.
+"""
+
 from tree_design import (
     TreeBuilder,
     SplittingState,
