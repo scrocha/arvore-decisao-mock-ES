@@ -42,3 +42,29 @@ class LeafNode(Node):
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__} -> '{self.value}'"
+
+
+class DepthVisitor(NodeVisitor):
+    def visit_decision(self, node: DecisionNode) -> None:
+        print(
+            f"DepthVisitor: Calculando profundidade no nó {node}"
+        )
+        for child in node.children:
+            child.accept_visitor(self)
+
+    def visit_leaf(self, node: LeafNode) -> None:
+        print(
+            f"DepthVisitor: Atingiu a base da árvore no nó {node}"
+        )
+
+
+class CountLeavesVisitor(NodeVisitor):
+    def visit_decision(self, node: DecisionNode) -> None:
+        print(
+            f"CountLeavesVisitor: Atravessando {node} para encontrar folhas"
+        )
+        for child in node.children:
+            child.accept_visitor(self)
+
+    def visit_leaf(self, node: LeafNode) -> None:
+        print(f"CountLeavesVisitor: Folha encontrada: {node}.")
