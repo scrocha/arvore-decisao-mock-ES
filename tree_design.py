@@ -12,16 +12,6 @@ class Node(ABC):
         return self.__class__.__name__
 
 
-class NodeVisitor(ABC):
-    @abstractmethod
-    def visit_decision(self, node: DecisionNode) -> None:
-        pass
-
-    @abstractmethod
-    def visit_leaf(self, node: LeafNode) -> None:
-        pass
-
-
 class DecisionNode(Node):
     def __init__(self) -> None:
         self.children: List[Node] = []
@@ -44,27 +34,60 @@ class LeafNode(Node):
         return f"{self.__class__.__name__} -> '{self.value}'"
 
 
+##########################################################################################
+
+
+class NodeVisitor(ABC):
+    @abstractmethod
+    def visit_decision(self, node: DecisionNode) -> None:
+        pass
+
+    @abstractmethod
+    def visit_leaf(self, node: LeafNode) -> None:
+        pass
+
+
 class DepthVisitor(NodeVisitor):
     def visit_decision(self, node: DecisionNode) -> None:
-        print(
-            f"DepthVisitor: Calculando profundidade no nó {node}"
-        )
+        print(f"DepthVisitor: Calculando profundidade no nó {node}")
         for child in node.children:
             child.accept_visitor(self)
 
     def visit_leaf(self, node: LeafNode) -> None:
-        print(
-            f"DepthVisitor: Atingiu a base da árvore no nó {node}"
-        )
+        print(f"DepthVisitor: Atingiu a base da árvore no nó {node}")
 
 
 class CountLeavesVisitor(NodeVisitor):
     def visit_decision(self, node: DecisionNode) -> None:
-        print(
-            f"CountLeavesVisitor: Atravessando {node} para encontrar folhas"
-        )
+        print(f"CountLeavesVisitor: Atravessando {node} para encontrar folhas")
         for child in node.children:
             child.accept_visitor(self)
 
     def visit_leaf(self, node: LeafNode) -> None:
         print(f"CountLeavesVisitor: Folha encontrada: {node}.")
+
+
+##########################################################################################
+
+
+class PreOrderIterator:
+    def __init__(self, root: Optional[Node]) -> None:
+        # A pilha armazena os nós a serem visitados.
+        self.stack: List[Node] = [root] if root else []
+
+    def __iter__(self) -> PreOrderIterator:
+        return self
+
+    def __next__(self) -> Node:
+        if not self.stack:
+            raise StopIteration
+
+        node = self.stack.pop()
+
+        # Se for um nó de decisão, adiciona seus filhos à pilha.
+        # Adiciona em ordem reversa para que o primeiro filho seja o próximo a ser pego (LIFO).
+        if isinstance(node, DecisionNode):
+            for child in reversed(node.children):
+                self.stack.append(child)
+
+        return node
