@@ -8,30 +8,78 @@ from typing import List, Optional
 
 
 class Node(ABC):
+    """
+    Classe base abstrata que representa um componente na árvore de decisão (Component).
+    Define a interface comum para nós de decisão e nós folha.
+    """
+
     @abstractmethod
     def accept_visitor(self, visitor: NodeVisitor) -> None:
+        """
+        Aceita um visitante (Visitor) para executar operações sobre o nó.
+
+        Args:
+            visitor (NodeVisitor): O visitante que processará o nó.
+        """
         pass
 
     def __str__(self) -> str:
+        """
+        Retorna a representação em string do nó para identificação.
+        """
         return self.__class__.__name__
 
 
 class DecisionNode(Node):
+    """
+    Representa um nó interno de decisão que pode conter filhos (Composite).
+    """
+
     def __init__(self) -> None:
+        """Inicializa um nó de decisão com uma lista vazia de filhos."""
         self.children: List[Node] = []
 
     def add_child_node(self, node: Node) -> None:
+        """
+        Adiciona um nó filho à lista de filhos deste nó de decisão.
+
+        Args:
+            node (Node): O nó (Decisão ou Folha) a ser adicionado.
+        """
         self.children.append(node)
 
     def accept_visitor(self, visitor: NodeVisitor) -> None:
+        """
+        Aceita um visitante e delega para o método específico de visitação de nós de decisão.
+
+        Args:
+            visitor (NodeVisitor): O visitante.
+        """
         visitor.visit_decision(self)
 
 
 class LeafNode(Node):
+    """
+    Representa um nó folha que contém um resultado final ou classificação (Leaf).
+    Não possui filhos.
+    """
+
     def __init__(self, value: str) -> None:
+        """
+        Inicializa o nó folha com um valor de classificação.
+
+        Args:
+            value (str): O valor ou rótulo da classe associada a esta folha.
+        """
         self.value: str = value
 
     def accept_visitor(self, visitor: NodeVisitor) -> None:
+        """
+        Aceita um visitante e delega para o método específico de visitação de nós folha.
+
+        Args:
+            visitor (NodeVisitor): O visitante.
+        """
         visitor.visit_leaf(self)
 
     def __str__(self) -> str:
@@ -42,16 +90,37 @@ class LeafNode(Node):
 
 
 class NodeVisitor(ABC):
+    """
+    Interface abstrata para os Visitors.
+    Define os métodos de visita para cada tipo concreto de nó (DecisionNode e LeafNode).
+    """
+
     @abstractmethod
     def visit_decision(self, node: DecisionNode) -> None:
+        """
+        Método chamado ao visitar um DecisionNode.
+
+        Args:
+            node (DecisionNode): O nó de decisão sendo visitado.
+        """
         pass
 
     @abstractmethod
     def visit_leaf(self, node: LeafNode) -> None:
+        """
+        Método chamado ao visitar um LeafNode.
+
+        Args:
+            node (LeafNode): O nó folha sendo visitado.
+        """
         pass
 
 
 class DepthVisitor(NodeVisitor):
+    """
+    Visitor concreto que simula o cálculo da profundidade da árvore.
+    """
+
     def visit_decision(self, node: DecisionNode) -> None:
         print(f"DepthVisitor: Calculando profundidade no nó {node}.")
         for child in node.children:
@@ -62,8 +131,14 @@ class DepthVisitor(NodeVisitor):
 
 
 class CountLeavesVisitor(NodeVisitor):
+    """
+    Visitor concreto que simula a contagem de nós folha na árvore.
+    """
+
     def visit_decision(self, node: DecisionNode) -> None:
-        print(f"CountLeavesVisitor: Atravessando {node} para encontrar folhas.")
+        print(
+            f"CountLeavesVisitor: Atravessando {node} para encontrar folhas."
+        )
         for child in node.children:
             child.accept_visitor(self)
 
